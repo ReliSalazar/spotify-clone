@@ -79,7 +79,10 @@ const VolumeControl: React.FC<VolumeControlProps> = () => {
 
   return (
     <div className="flex justify-center gap-x-2 text-white">
-      <button onClick={handleClickVolumeIcon}>
+      <button
+        onClick={handleClickVolumeIcon}
+        className="opacity-70 hover:opacity-100 transition"
+      >
         {volume < 0.1 ? <VolumeSilence /> : <Volume />}
       </button>
       <Slider
