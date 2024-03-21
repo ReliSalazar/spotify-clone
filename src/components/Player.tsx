@@ -5,6 +5,8 @@ import CurrentSong from "./CurrentSong";
 
 interface PlayerProps {}
 
+interface VolumeControlProps {}
+
 export const Pause = ({ className }: { className: string }) => (
   <svg
     className={className}
@@ -38,7 +40,7 @@ export const VolumeSilence = () => (
     height="16"
     width="16"
     aria-hidden="true"
-    aria-label="Volumen apagado"
+    aria-label="Volume off"
     viewBox="0 0 16 16"
   >
     <path d="M13.86 5.47a.75.75 0 0 0-1.061 0l-1.47 1.47-1.47-1.47A.75.75 0 0 0 8.8 6.53L10.269 8l-1.47 1.47a.75.75 0 1 0 1.06 1.06l1.47-1.47 1.47 1.47a.75.75 0 0 0 1.06-1.06L12.39 8l1.47-1.47a.75.75 0 0 0 0-1.06z"></path>
@@ -53,8 +55,7 @@ export const Volume = () => (
     height="16"
     width="16"
     aria-hidden="true"
-    aria-label="Volumen alto"
-    id="volume-icon"
+    aria-label="Volume on"
     viewBox="0 0 16 16"
   >
     <path d="M9.741.85a.75.75 0 0 1 .375.65v13a.75.75 0 0 1-1.125.65l-6.925-4a3.642 3.642 0 0 1-1.33-4.967 3.639 3.639 0 0 1 1.33-1.332l6.925-4a.75.75 0 0 1 .75 0zm-6.924 5.3a2.139 2.139 0 0 0 0 3.7l5.8 3.35V2.8l-5.8 3.35zm8.683 4.29V5.56a2.75 2.75 0 0 1 0 4.88z"></path>
@@ -62,23 +63,62 @@ export const Volume = () => (
   </svg>
 );
 
+const VolumeControl: React.FC<VolumeControlProps> = () => {
+  const volume = usePlayerStore((state) => state.volume);
+  const setVolume = usePlayerStore((state) => state.setVolume);
+  const previousVolumeRef = useRef(volume);
+
+  const handleClickVolumeIcon = () => {
+    if (volume < 0.1) {
+      setVolume(previousVolumeRef.current);
+    } else {
+      previousVolumeRef.current = volume;
+      setVolume(0);
+    }
+  };
+
+  return (
+    <div className="flex justify-center gap-x-2 text-white">
+      <button onClick={handleClickVolumeIcon}>
+        {volume < 0.1 ? <VolumeSilence /> : <Volume />}
+      </button>
+      <Slider
+        defaultValue={[100]}
+        value={[volume * 100]}
+        max={100}
+        min={0}
+        className="w-[95px]"
+        onValueChange={(value) => {
+          const [newVolume] = value;
+          const volumeValue = newVolume / 100;
+          setVolume(volumeValue);
+        }}
+      />
+    </div>
+  );
+};
+
 const Player: React.FC<PlayerProps> = () => {
-  const { isPlaying, currentMusic, setIsPlaying, setCurrentMusic } =
-    usePlayerStore((state) => state);
+  const { isPlaying, currentMusic, setIsPlaying, volume } = usePlayerStore(
+    (state) => state
+  );
 
   const audioRef = useRef<HTMLAudioElement>(null);
-  const volumeRef = useRef<number>(1);
 
   useEffect(() => {
     isPlaying ? audioRef.current?.play() : audioRef.current?.pause();
   }, [isPlaying]);
 
   useEffect(() => {
-    const { song, playlist, songs } = currentMusic;
+    if (audioRef.current) audioRef.current.volume = volume;
+  }, [volume]);
+
+  useEffect(() => {
+    const { song, playlist } = currentMusic;
     if (song && audioRef.current) {
       const src = `/music/${playlist?.id}/0${song.id}.mp3`;
       audioRef.current.src = src;
-      audioRef.current.volume = volumeRef.current;
+      audioRef.current.volume = volume;
       audioRef.current.play();
     }
   }, [currentMusic]);
@@ -105,19 +145,7 @@ const Player: React.FC<PlayerProps> = () => {
       </div>
 
       <div className="grid place-content-center">
-        <Slider
-          defaultValue={[100]}
-          max={100}
-          min={0}
-          className="w-[95px]"
-          onValueChange={(value) => {
-            if (!audioRef.current) return;
-            const [newVolume] = value;
-            const volumeValue = newVolume / 100;
-            volumeRef.current = volumeValue;
-            audioRef.current.volume = volumeValue;
-          }}
-        />
+        <VolumeControl />
       </div>
     </div>
   );
