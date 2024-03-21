@@ -10,24 +10,20 @@ const CardPlayButton: React.FC<CardPlayButtonProps> = ({ id }) => {
   const { isPlaying, currentMusic, setIsPlaying, setCurrentMusic } =
     usePlayerStore((state) => state);
 
-  const handleClick = () => {
-    setCurrentMusic({
-      playlist: {
-        id,
-        albumId: 1,
-        title:"My Playlist",
-        color: { accent: "#da2735", dark: "#7f1d1d" },
-        cover:"https://picsum.photos/id/237/200/300",
-        artists:["Your Name"],
-      },
-      song: null,
-      songs: [],
-    });
-
-    setIsPlaying(!isPlaying);
-  };
-
   const isPlayingPlaylist = isPlaying && currentMusic.playlist?.id === id;
+
+  const handleClick = async () => {
+    if (isPlayingPlaylist) {
+      setIsPlaying(false);
+      return;
+    }
+
+    const response = await fetch(`/api/get-info-playlist.json?id=${id}`);
+    const { songs, playlist } = await response.json();
+
+    setIsPlaying(true);
+    setCurrentMusic({ songs, playlist, song: songs[0] });
+  };
 
   return (
     <button

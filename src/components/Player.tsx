@@ -61,26 +61,26 @@ export const Volume = () => (
 );
 
 const Player: React.FC<PlayerProps> = () => {
-  const { isPlaying, setIsPlaying } = usePlayerStore((state) => state);
-  const [CurrentSong, setcurrentSong] = useState(null);
+  const { isPlaying, currentMusic, setIsPlaying, setCurrentMusic } =
+    usePlayerStore((state) => state);
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
-    if (audioRef.current) audioRef.current.src = `music/1/01.mp3`;
-  }, []);
+    isPlaying ? audioRef.current?.play() : audioRef.current?.pause();
+  }, [isPlaying]);
+
+  useEffect(() => {
+    const { song, playlist, songs } = currentMusic;
+    if (song && audioRef.current) {
+      const src = `/music/${playlist?.id}/0${song.id}.mp3`;
+      audioRef.current.src = src;
+      audioRef.current.play();
+    }
+  }, [currentMusic]);
 
   const handleClick = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play();
-        audioRef.current.volume = 0.1;
-      }
-
-      setIsPlaying(!isPlaying);
-    }
+    setIsPlaying(!isPlaying);
   };
 
   return (
