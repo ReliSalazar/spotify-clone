@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { usePlayerStore } from "@/store/playerStore";
+import CurrentSong from "@/components/CurrentSong.tsx";
 
 interface PlayerProps {}
 
@@ -85,7 +86,7 @@ const Player: React.FC<PlayerProps> = () => {
 
   return (
     <div className="flex flex-row justify-between w-full px-4 z-50">
-      <div>CurrentSong</div>
+      <CurrentSong currentSong={currentMusic.song} />
 
       <div className="grid place-content-center gap-4 flex-1">
         <div className="flex justify-center">
