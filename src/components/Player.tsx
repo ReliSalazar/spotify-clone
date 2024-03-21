@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { usePlayerStore } from "@/store/playerStore";
-import CurrentSong from "@/components/CurrentSong.tsx";
+import { Slider } from "./Slider";
+import CurrentSong from "./CurrentSong";
 
 interface PlayerProps {}
 
@@ -66,6 +67,7 @@ const Player: React.FC<PlayerProps> = () => {
     usePlayerStore((state) => state);
 
   const audioRef = useRef<HTMLAudioElement>(null);
+  const volumeRef = useRef<number>(1);
 
   useEffect(() => {
     isPlaying ? audioRef.current?.play() : audioRef.current?.pause();
@@ -76,6 +78,7 @@ const Player: React.FC<PlayerProps> = () => {
     if (song && audioRef.current) {
       const src = `/music/${playlist?.id}/0${song.id}.mp3`;
       audioRef.current.src = src;
+      audioRef.current.volume = volumeRef.current;
       audioRef.current.play();
     }
   }, [currentMusic]);
@@ -97,12 +100,25 @@ const Player: React.FC<PlayerProps> = () => {
               <Play className="text-black" />
             )}
           </button>
+          <audio ref={audioRef} />
         </div>
       </div>
 
-      <div className="grid place-content-center"></div>
-
-      <audio ref={audioRef} />
+      <div className="grid place-content-center">
+        <Slider
+          defaultValue={[100]}
+          max={100}
+          min={0}
+          className="w-[95px]"
+          onValueChange={(value) => {
+            if (!audioRef.current) return;
+            const [newVolume] = value;
+            const volumeValue = newVolume / 100;
+            volumeRef.current = volumeValue;
+            audioRef.current.volume = volumeValue;
+          }}
+        />
+      </div>
     </div>
   );
 };
