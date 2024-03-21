@@ -1,4 +1,6 @@
 ---
+import AsideMenu from "@/components/AsideMenu.astro";
+
 interface Props {
   title: string;
 }
@@ -18,11 +20,13 @@ const { title } = Astro.props;
   </head>
   <body>
     <div id="app" class="relative h-screen p-2 gap-2">
-      <aside class="[grid-area:aside] flex-col overflow-y-auto bg-blue-100">ASIDE</aside>
+      <aside class="[grid-area:aside] flex-col overflow-y-auto">
+        <AsideMenu />
+      </aside>
 
-      <main class="[grid-area:main] bg-red-200">MAIN</main>
+      <main class="[grid-area:main] rounded-lg bg-zinc-900"></main>
 
-      <footer class="[grid-area:player] bg-green-100">PLAYER</footer>
+      <footer class="[grid-area:player] min-h-[100px]"></footer>
 
       <slot />
     </div>
@@ -39,11 +43,8 @@ const { title } = Astro.props;
   }
 </style>
 <style is:global>
-  :root {
-  }
   html {
     font-family: system-ui, sans-serif;
-    background: #13151a;
-    background-size: 224px;
+    background: #000;
   }
 </style>
