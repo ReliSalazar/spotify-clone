@@ -1,4 +1,5 @@
 import React from "react";
+import { usePlayerStore } from "@/store/playerStore";
 import { Pause, Play } from "./Player.tsx";
 
 interface CardPlayButtonProps {
@@ -6,10 +7,24 @@ interface CardPlayButtonProps {
 }
 
 const CardPlayButton: React.FC<CardPlayButtonProps> = ({ id }) => {
+  const { isPlaying, currentMusic, setIsPlaying, setCurrentMusic } =
+    usePlayerStore((state) => state);
+
+  const handleClick = () => {
+    setIsPlaying(!isPlaying);
+  };
+
   return (
-    <div className="card-play-button rounded-full bg-green-500 p-2">
-      <Play className="text-black" />
-    </div>
+    <button
+      onClick={handleClick}
+      className="card-play-button rounded-full bg-green-500 p-2"
+    >
+      {isPlaying ? (
+        <Pause className="text-black" />
+      ) : (
+        <Play className="text-black" />
+      )}
+    </button>
   );
 };
 

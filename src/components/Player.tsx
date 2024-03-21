@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { usePlayerStore } from "@/store/playerStore";
 
 interface PlayerProps {}
 
@@ -60,7 +61,7 @@ export const Volume = () => (
 );
 
 const Player: React.FC<PlayerProps> = () => {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const { isPlaying, setIsPlaying } = usePlayerStore((state) => state);
   const [CurrentSong, setcurrentSong] = useState(null);
 
   const audioRef = useRef<HTMLAudioElement>(null);
