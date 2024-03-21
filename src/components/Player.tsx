@@ -1,11 +1,19 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { usePlayerStore } from "@/store/playerStore";
 import { Slider } from "./Slider";
-import CurrentSong from "./CurrentSong";
+import type { Song } from "@/lib/data";
 
 interface PlayerProps {}
 
+interface CurrentSongProps {
+  currentSong: Song | null;
+}
+
 interface VolumeControlProps {}
+
+interface SongControlProps {
+  audio: React.RefObject<HTMLAudioElement>;
+}
 
 export const Pause = ({ className }: { className: string }) => (
   <svg
@@ -62,6 +70,65 @@ export const Volume = () => (
     <path d="M11.5 13.614a5.752 5.752 0 0 0 0-11.228v1.55a4.252 4.252 0 0 1 0 8.127v1.55z"></path>
   </svg>
 );
+
+const CurrentSong: React.FC<CurrentSongProps> = ({ currentSong }) => {
+  const { title, artists, image } = currentSong || {};
+
+  return (
+    <div className={`flex items-center gap-5 relative overflow-hidden`}>
+      <picture className="w-16 h-16 bg-zinc-800 rounded-md shadow-lg overflow-hidden">
+        <img src={image} alt={title} />
+      </picture>
+
+      <div className="flex flex-col">
+        <h3 className="font-semibold text-sm block">{title}</h3>
+        <span className="text-xs opacity-80">{artists?.join(", ")}</span>
+      </div>
+    </div>
+  );
+};
+
+const SongControl: React.FC<SongControlProps> = ({ audio }) => {
+  const [currentTime, setCurrentTime] = useState<number>(0);
+
+  const duration = audio?.current?.duration ?? 0;
+
+  const formatTime = (time: number) => {
+    if (isNaN(time)) return "00:00";
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  };
+
+  const handleTimeUpdate = () => {
+    setCurrentTime(audio?.current?.currentTime ?? 0);
+  };
+
+  useEffect(() => {
+    audio.current?.addEventListener("timeupdate", handleTimeUpdate);
+
+    return () => {
+      audio.current?.removeEventListener("timeupdate", handleTimeUpdate);
+    };
+  }, []);
+
+  return (
+    <div className="flex justify-center gap-x-2 text-xs">
+      <span className="opacity-50 w-12 text-right">{formatTime(currentTime)}</span>
+      <Slider
+        defaultValue={[0]}
+        value={[audio.current?.currentTime ?? 0 * 100]}
+        max={audio.current?.duration ?? 0}
+        min={0}
+        className="w-[400px]"
+        onValueChange={(value) => {
+          if (audio.current) audio.current.currentTime = value[0];
+        }}
+      />
+      <span className="opacity-50 w-12">{formatTime(duration)}</span>
+    </div>
+  );
+};
 
 const VolumeControl: React.FC<VolumeControlProps> = () => {
   const volume = usePlayerStore((state) => state.volume);
@@ -131,11 +198,13 @@ const Player: React.FC<PlayerProps> = () => {
   };
 
   return (
-    <div className="flex flex-row justify-between w-full px-4 z-50">
+    <div className="flex flex-row justify-between align-bottom w-full px-1 z-50">
+      <div className="w-[200px]">
       <CurrentSong currentSong={currentMusic.song} />
+      </div>
 
       <div className="grid place-content-center gap-4 flex-1">
-        <div className="flex justify-center">
+        <div className="flex flex-col items-center justify-center gap-2">
           <button className="bg-white rounded-full p-2" onClick={handleClick}>
             {isPlaying ? (
               <Pause className="text-black" />
@@ -143,6 +212,9 @@ const Player: React.FC<PlayerProps> = () => {
               <Play className="text-black" />
             )}
           </button>
+
+          <SongControl audio={audioRef} />
+
           <audio ref={audioRef} />
         </div>
       </div>
