@@ -1,7 +1,7 @@
 {
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
-    "baseUrl": "D:/workspace/spotify-clone",
+    "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     },
