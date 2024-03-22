@@ -14,7 +14,10 @@ This repository contains a clone of the popular music service Spotify, built usi
 ## Technologies Used
 
 - [Astro](https://astro.build/)
-- [Other relevant frameworks and libraries]
+- [React](https://react.dev/)
+- [Svelte](https://svelte.dev/)
+- [TailwindCSS](https://tailwindcss.com/)
+- [Zustand](https://github.com/pmndrs/zustand)
 
 ## Installation
 
