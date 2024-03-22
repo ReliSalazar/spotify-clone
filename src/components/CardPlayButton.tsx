@@ -1,4 +1,5 @@
 import React from "react";
+import { allPlaylists, songs as allSongs } from "@/lib/data";
 import { usePlayerStore } from "@/store/playerStore";
 import { Pause, Play } from "./Player.tsx";
 
@@ -22,11 +23,18 @@ const CardPlayButton: React.FC<CardPlayButtonProps> = ({
       return;
     }
 
-    const response = await fetch(`/api/get-info-playlist.json?id=${id}`);
-    const { songs, playlist } = await response.json();
+    // const response = await fetch(`/api/get-info-playlist.json?id=${id}`);
+    // const { songs, playlist } = await response.json();
+
+    const playlist = allPlaylists.find((playlist) => playlist.id === id);
+    const songs = allSongs.filter(
+      ({ albumId }) => albumId === playlist?.albumId
+    );
 
     setIsPlaying(true);
-    setCurrentMusic({ songs, playlist, song: songs[0] });
+    if (playlist) {
+      setCurrentMusic({ songs, playlist, song: songs[0] });
+    }
   };
 
   const iconClassName = size === "small" ? "w-4 h-4" : "w-5 h-5";

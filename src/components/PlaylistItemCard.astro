@@ -7,7 +7,7 @@ interface Props {
 }
 
 const { playlist } = Astro.props;
-const { id, albumId, title, color, cover, artists } = playlist;
+const { id, title, cover, artists } = playlist;
 const artistsStrings = artists.join(", ");
 ---
 
@@ -23,7 +23,7 @@ const artistsStrings = artists.join(", ");
   </div>
 
   <a
-    href={`/playlist/${id}`}
+    href={`/spotify-clone/playlist/${id}`}
     class="playlist-item flex flex-col relative p-2 overflow-hidden gap-2 pb-6 w-44"
     transition:name=`playlist ${id} box`
   >

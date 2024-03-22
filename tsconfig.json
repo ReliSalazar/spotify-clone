@@ -3,24 +3,7 @@
   "compilerOptions": {
     "baseUrl": "D:/workspace/spotify-clone",
     "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "@/components": [
-        "src/components/*"
-      ],
-      "@/icons": [
-        "src/icons/*"
-      ],
-      "@/layouts": [
-        "src/layouts/*"
-      ],
-      "@/lib": [
-        "src/lib/*"
-      ],
-      "@/store": [
-        "src/store/*"
-      ],
+      "@/*": ["src/*"]
     },
     "jsx": "react-jsx",
     "jsxImportSource": "react"

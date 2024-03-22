@@ -1,6 +1,5 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import PlaylistItemCard from "@/components/PlaylistItemCard.astro";
 import MusicsTable from "@/components/MusicsTable.astro";
 import CardPlayButton from "@/components/CardPlayButton";
 import { allPlaylists, songs } from "@/lib/data";
@@ -15,6 +14,12 @@ const playlist = allPlaylists.find((playlist) => playlist.id === id);
 const playListSongs = songs.filter(
   (song) => song.albumId === playlist?.albumId
 );
+
+export async function getStaticPaths() {
+  return allPlaylists.map((playlist) => ({
+    params: { id: playlist.id },
+  }));
+}
 ---
 
 <Layout title="Spotify Clone">
