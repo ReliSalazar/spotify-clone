@@ -4,6 +4,8 @@
 
 This repository contains a clone of the popular music service Spotify, built using Astro—a modern front-end site generator that offers incredibly fast performance.
 
+If you want to check it out, there's a [Github Pages live demo](https://relisalazar.github.io/spotify-clone/).
+
 ## Features
 
 - User interface similar to Spotify.
